@@ -1,0 +1,72 @@
+[
+  {
+    "name": "ingestion_timestamp",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "vehicle_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "mileage",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "soc",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "charging_power",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "charging_type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "is_charging",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "is_online",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "external_temperature",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "latitude",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "longitude",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "altitude",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "update_time",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "state",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

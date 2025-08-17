@@ -1,0 +1,13 @@
+{
+  "carConnectivity": {
+    "connectors": [
+      {
+        "type": "volkswagen",
+        "config": {
+          "username": "SECRET:CAR_API_USERNAME",
+          "password": "SECRET:CAR_API_PASSWORD"
+        }
+      }
+    ]
+  }
+}

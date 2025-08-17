@@ -1,0 +1,4 @@
+google-cloud-bigquery
+google-cloud-secret-manager
+git+https://github.com/tillsteinbach/CarConnectivity.git
+git+https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
