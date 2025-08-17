@@ -1,0 +1,9 @@
+# Python build artifacts and cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# Editor configuration
+.vscode/
