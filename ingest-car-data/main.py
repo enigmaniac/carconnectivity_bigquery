@@ -87,20 +87,30 @@ def main(event, context):
     # Step 3: Iterate over the list of vehicles
     for vehicle in vehicles:
         edrive = vehicle.get_electric_drive()
-        soc = edrive.level.value if edrive else None
+        soc = edrive.level.value if edrive and edrive.level else None
+
+        # Safely access nested attributes to prevent crashes on missing data
+        charging = vehicle.charging
+        charging_power = charging.power.value if charging and charging.power else None
+        charging_type_enum = charging.type.value if charging and charging.type else None
+        charging_type = charging_type_enum.value if charging_type_enum else None
+        is_charging_enum = charging.state.value if charging and charging.state else None
+        is_charging = is_charging_enum.value if is_charging_enum else None
+        is_online_enum = vehicle.connection_state.value if vehicle.connection_state else None
+        is_online = is_online_enum.value if is_online_enum else None
 
         # Step 4: Extract the relevant fields from the vehicle object.
         if vehicle:
             row = {
                 "ingestion_timestamp": ingestion_time.isoformat(),
                 "vehicle_id": vehicle.vin.value,
-                "mileage": vehicle.odometer.value,
+                "mileage": vehicle.odometer.value if vehicle.odometer else None,
                 "soc": soc,
-                "charging_power": vehicle.charging.power.value,
-                "charging_type": vehicle.charging.type.value.value,
-                "is_charging": vehicle.charging.state.value.value,
-                "is_online": vehicle.connection_state.value.value,
-                "external_temperature": vehicle.outside_temperature.value - 273.15,
+                "charging_power": charging_power,
+                "charging_type": charging_type,
+                "is_charging": is_charging,
+                "is_online": is_online,
+                "external_temperature": vehicle.outside_temperature.value - 273.15 if vehicle.outside_temperature else None,
                 "latitude": vehicle.position.latitude.value if vehicle.position else None,
                 "longitude": vehicle.position.longitude.value if vehicle.position else None,
                 "state": vehicle.state.value.value,

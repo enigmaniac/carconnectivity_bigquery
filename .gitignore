@@ -7,3 +7,4 @@ __pycache__/
 
 # Editor configuration
 .vscode/
+db_schema/sample.csv

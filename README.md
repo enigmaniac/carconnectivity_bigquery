@@ -113,6 +113,42 @@ This Cloud Scheduler job will trigger your function every 5 minutes.
 
 Your data pipeline is now fully deployed and operational!
 
+### Step 7: Deploy the Elevation Backfill Job
+
+To support advanced efficiency analytics (like altitude changes), the pipeline includes a dedicated function (`elevation-backfill/main.py`) that periodically scans the database for new, unique GPS coordinates, fetches their elevation from the Open-Elevation API, and safely merges the data back into the `vehicle_status` table.
+
+1.  **Create a Pub/Sub Topic**:
+    ```bash
+    gcloud pubsub topics create run-elevation-backfill
+    ```
+
+2.  **Deploy the Cloud Function**:
+    Deploy the backfill function from its dedicated directory. We also increase the timeout to 5 minutes to accommodate API rate limits.
+    ```bash
+    gcloud functions deploy elevation-backfill \
+      --gen2 \
+      --runtime=python311 \
+      --region=europe-west1 \
+      --source=elevation-backfill/ \
+      --entry-point=main \
+      --trigger-topic=run-elevation-backfill \
+      --set-env-vars=GCP_PROJECT=$(gcloud config get-value project) \
+      --timeout=300
+    ```
+    *Note: Ensure the compute service account has the `BigQuery Data Editor` IAM role, just like the ingestion function.*
+
+3.  **Create the Nightly Scheduler Job**:
+    Schedule the job to run once a day, for example, at 2:00 AM.
+    ```bash
+    gcloud scheduler jobs create pubsub elevation-backfill-scheduler \
+      --schedule="0 2 * * *" \
+      --topic=run-elevation-backfill \
+      --message-body="Run Backfill" \
+      --time-zone="Europe/Paris" \
+      --location=europe-west1
+    ```
+
+
 ## 3. Troubleshooting
 
 If you encounter issues, here are some steps to debug the function.

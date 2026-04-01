@@ -1,4 +1,5 @@
+functions-framework>=3.0.0
 google-cloud-bigquery
 google-cloud-secret-manager
-git+https://github.com/tillsteinbach/CarConnectivity.git
-git+https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
+git+https://github.com/tillsteinbach/CarConnectivity.git@main#egg=carconnectivity
+git+https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git@main#egg=carconnectivity-connector-volkswagen
