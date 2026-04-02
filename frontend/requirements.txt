@@ -1,0 +1,7 @@
+streamlit==1.37.0
+pandas==2.2.1
+google-cloud-bigquery==3.18.0
+db-dtypes==1.2.0
+plotly==5.19.0
+folium==0.16.0
+streamlit-folium==0.18.0

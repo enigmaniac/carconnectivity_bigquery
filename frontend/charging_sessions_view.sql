@@ -36,7 +36,9 @@ SELECT
   MAX(charging_power) AS max_charging_power,
   ARRAY_AGG(charging_type IGNORE NULLS ORDER BY ingestion_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS charging_type,
   ARRAY_AGG(latitude ORDER BY ingestion_timestamp ASC LIMIT 1)[OFFSET(0)] AS latitude,
-  ARRAY_AGG(longitude ORDER BY ingestion_timestamp ASC LIMIT 1)[OFFSET(0)] AS longitude
+  ARRAY_AGG(longitude ORDER BY ingestion_timestamp ASC LIMIT 1)[OFFSET(0)] AS longitude,
+  ARRAY_AGG(city IGNORE NULLS ORDER BY ingestion_timestamp ASC LIMIT 1)[SAFE_OFFSET(0)] AS city,
+  ARRAY_AGG(country IGNORE NULLS ORDER BY ingestion_timestamp ASC LIMIT 1)[SAFE_OFFSET(0)] AS country
 FROM session_groups
 GROUP BY vehicle_id, session_id
 -- Filter out any brief charging blips that are less than a minute.

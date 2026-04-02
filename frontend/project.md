@@ -21,22 +21,27 @@ The UI should be organized into the following analytical views:
 - **Quick Stats:** Trailing 7-day and 30-day summaries (total km driven, total time, average efficiency, total kWh).
 
 **2. Trip Logs & Drilldowns**
-- **Trip History:** A chronological, paginated list of automatically detected trips. This should show Date, Start time, duration, distance, kwh consumed, and efficiency (KWh/100km)
-- **Trip Details:** Clicking a trip reveals an interactive map showing the route, start/end times, distance, duration, energy consumed, efficiency, temperature, altitude change, and average speed.
+- **Trip History:** A chronological, paginated list of automatically detected trips (which may consist of multiple driving segments). This should show Date, Start time, destination (user-friendly city & country code), duration, distance, kwh consumed, and efficiency (KWh/100km).
+- **Trip Details:** Clicking a trip reveals an interactive map showing the route and overall stats. It should include a header with the trip date and start/end times, and breakdown of total time into **Driving**, **Charging**, and **Parked** durations.
+
+The trip details should have a **trip overview**, displayed as a vertical line segment on the left representing, with dots representing the start/stop locations of the trip-segments and/or charging (showing the user-friendly location with city & country code, and time), and segments between the dots showing a summary of the key events of the trip (driving, charging, parked -- along with duration, distance, and KWH for the segment -- depending on the event type) The trip should start at the top of the line with the trip departure, and end at the bottom of the line with the final arrival.
+
+ When clicking on any of these trip components (other than "parked"), display a detailed view of the individual **Trip Segment** (start and end location in user-friendly format (city, 2-letter country code), distance, time, average speed, average temperature, KWH consumed, efficiency -- if the `is_consumption_estimated` flag is true, display a warning tooltip/icon indicating the kWh consumption is an estimate) or mid-trip **Charge Sessions** (location, AC or DC, time, kWh added, max power).    
 
 **3. Efficiency & Environmental Analytics**
 - **Efficiency Scatter Plots:** Interactive visualizations comparing average trip efficiency against:
   - *Outside temperature:* To visualize battery performance/range loss in winter vs. summer.
   - *Average speed:* Highway vs. city driving efficiency.
   - *Elevation change:* Net elevation gain/loss calculation (requires enriching the dataset with the Elevation API).
+  Allow this data to be filtered based on various factors like date, trip time, trip duration, starting or ending location, etc.
 
 **4. Charging & Battery Health Insights**
 - **Charging Sessions:** Log of all charging events, showing start/end SoC, duration, max charging power, and charging type (AC/DC / Fast vs. Slow).
 - **Cost Estimation:** A configuration tab to input the location of home chargers, as well as electricity rates (e.g., euros/kWh) for both home charging and on-the-road charging, to estimate charging costs over time based on where the car is being charged.
 - **Phantom Drain Tracker:** Analysis of battery percentage lost while the car is parked and asleep over extended periods (e.g., overnight or at the airport), as well as phantom loss when charge levels are recalculated when the car starts charging.
 
-## 4. Data Pipeline Enhancements Needed
+## 4. Data Pipeline Enhancements Needed (COMPLETE!)
 To support the fast loading of the front-end, the following backend/database tasks will need to be addressed:
-- **Trip & Session Inference Logic:** Because the raw BigQuery table only stores 5-minute time-series snapshots, we will need to create BigQuery SQL Views or Scheduled Queries to group continuous "driving" or "charging" rows into discrete `trips` and `charge_sessions` tables.
-- **Energy Consumption Logic:** Energy usage is reported as SoC (charge percentage), which is only precise to 1%. We'll need to convert this to kWh based on the size of the battery in the car (77kwh). This will also require some clever logic to try to infer greater precision of the actual consumption beyond a 0.77kwh precision (1% of 77kwh) for shorter trips, most likely using the number of km driven and typical efficiency rates.
+- **Trip & Session Inference Logic:** Because the raw BigQuery table only stores 5-minute time-series snapshots, we will need to create BigQuery SQL Views to group continuous "driving" rows into `segments`, and then group those segments into holistic `trips` based on idle periods of less than 2 hours.
+- **Energy Consumption Logic:** Energy usage is reported as SoC, which lacks precision for small movements. We use a **4% SoC drop threshold at the Trip level**. For trips <4%, we fallback to an assumed efficiency (16kWh/100km). For individual trip segments <4%, we estimate consumption using the segment's distance multiplied by the overall trip's average efficiency. Segments >=4% use their actual battery math.
 - **Elevation Backfill Strategy:** A script to periodically scan the `vehicle_status` table for new latitude/longitude pairs, query an Elevation API, and update the existing schema.

@@ -48,7 +48,7 @@ Follow these steps to deploy the data pipeline in your own Google Cloud project.
 
 ### Step 3: Create the BigQuery Table
 
-1.  **Create the Dataset**: This command creates a container for your table.
+1.  **Create the Dataset**: This command creates a container for your table. Note: you may want to specify a specific Region
     ```
     bq mk --dataset car_data
     ```
